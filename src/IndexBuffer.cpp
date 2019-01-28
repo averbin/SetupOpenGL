@@ -1,7 +1,8 @@
 #include "IndexBuffer.h"
 #include "Renderer.h"
 
-IndexBuffer::IndexBuffer(const unsigned int * data, unsigned int count)
+IndexBuffer::IndexBuffer(const unsigned int * data, unsigned int count) 
+    : count_(count)
 {
     ASSERT(sizeof(unsigned int) == sizeof(GLint));
     GLCall(glGenBuffers(1, &rendererID_));
