@@ -3,6 +3,12 @@ Thumbs.db
 ehthumbs.db
 ehthumbs_vista.db
 
+# Debug folder
+Debug
+
+# Visual Studio 2017
+.vs
+
 # Folder config file
 Desktop.ini
 
