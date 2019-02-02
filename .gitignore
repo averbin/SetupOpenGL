@@ -9,8 +9,9 @@ build64
 
 # Debug folder
 Debug
-Debug/
 Release
+Debug/
+Release/
 
 # Visual Studio 2017
 .vscode/
