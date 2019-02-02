@@ -3,10 +3,17 @@ Thumbs.db
 ehthumbs.db
 ehthumbs_vista.db
 
+# Build directory
+build
+build64
+
 # Debug folder
 Debug
+Debug/
+Release
 
 # Visual Studio 2017
+.vscode/
 .vs
 
 # Folder config file
