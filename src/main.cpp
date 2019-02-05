@@ -14,6 +14,8 @@
 #include "glm/glm.hpp"
 #include "glm/geometric.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
 
 int main(void)
 {
@@ -67,14 +69,11 @@ int main(void)
 
         glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
-
-        glm::mat4 mvp = proj * view * model;
 
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform4f("u_Color", 1.0f, 0.5f, 0.8f, 1.0f);
-        shader.SetUniformMat4m("u_MVP", mvp);
+
         Texture texture("res/img/pirate.png");
         texture.Bind();
         shader.SetUniform1i("u_Texture", 0);
@@ -85,17 +84,33 @@ int main(void)
         ib.Unbind();
 
         Renderer renderer;
+        ImGui::CreateContext();
+        ImGui_ImplGlfwGL3_Init(window, true);
+        ImGui::StyleColorsDark();
+
+        glm::vec3 translation(200, 200, 0);
 
         float r = 0.0f;
         float increment = 0.05f;
 
         std::cout << glGetString(GL_VERSION) << "\n";
+
+        bool show_demo_window = true;
+        bool show_another_window = false;
+        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
         while (!glfwWindowShouldClose(window))
         {
             renderer.Clear();
 
+            ImGui_ImplGlfwGL3_NewFrame();
+
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+            glm::mat4 mvp = proj * view * model;
+
             shader.Bind();
             shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+            shader.SetUniformMat4m("u_MVP", mvp);
 
             renderer.Draw(va, ib, shader);
 
@@ -106,10 +121,25 @@ int main(void)
 
             r += increment;
 
+            // 1. Show a simple window.
+            // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets automatically appears in a window called "Debug".
+            {
+                ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            }
+
+            ImGui::Render();
+            ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
     }
+
+    // Cleanup
+    ImGui_ImplGlfwGL3_Shutdown();
+    ImGui::DestroyContext();
+
     glfwTerminate();
     std::cout << "Terminate:\tGood bye glfw" << "\n";
     return 0;
